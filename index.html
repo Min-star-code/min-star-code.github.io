@@ -5,29 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mincheng Li | Data projects</title>
 <meta name="description" content="Four public-data projects by Mincheng Li. Each one turns on a choice about what to measure.">
-<script>document.documentElement.classList.add('js')</script>
+<script>(() => {
+  const root = document.documentElement; root.classList.add('js');
+  // Play the opening on a fresh arrival or a refresh; skip it when coming back from another page of this site
+  let seen = false;
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const fromSite = document.referrer && new URL(document.referrer).origin === location.origin && new URL(document.referrer).pathname !== location.pathname;
+    seen = !(nav && nav.type === 'reload') && (fromSite || (nav && nav.type === 'back_forward'));
+  } catch (e) {}
+  if (seen) root.classList.add('seen');
+  else if (!matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('intro-run');
+})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
 :root {
   color-scheme: light;
-  --page: #fdf9f5;      --page-rgb: 253, 249, 245;
+  --page: #ffffff;      --page-rgb: 255, 255, 255;
   --surface: #ffffff;   --surface-rgb: 255, 255, 255;
-  --card: #f9f0e8;      --card-rgb: 249, 240, 232;
-  --ink: #2b1a14;       --ink-rgb: 43, 26, 20;
-  --ink-2: rgba(43, 26, 20, .64);
-  --ink-3: rgba(43, 26, 20, .48);
-  --line: rgba(43, 26, 20, .10);
-  --mute: #f3d6c7;
-  --key: #2b1a14;       --on-key: #ffffff;
-  --peach: #f9d5c5;     --peach-rgb: 249, 213, 197;
-  --pink: #f7c3ce;      --pink-rgb: 247, 195, 206;
-  --apricot: #f6b592;   --apricot-rgb: 246, 181, 146;
-  --ember: #f2946a;     --ember-rgb: 242, 148, 106;
-  --sky: #b8cdf2;       --sky-rgb: 184, 205, 242;
-  --amber: #d9622f;     --amber-rgb: 217, 98, 47;
-  --display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --card: #fbf8e4;      --card-rgb: 251, 248, 228;
+  --ink: #000000;       --ink-rgb: 0, 0, 0;
+  --ink-2: rgba(0, 0, 0, .68);
+  --ink-3: rgba(0, 0, 0, .52);
+  --line: rgba(0, 0, 0, .12);
+  --mute: #f2eda8;
+  --key: #000000;       --on-key: #ffffff;
+  --neg: #eaab00;
+  /* Waterloo yellows, palest to deepest */
+  --y1: #f2eda8;        --y1-rgb: 242, 237, 168;
+  --y2: #fae100;        --y2-rgb: 250, 225, 0;
+  --y3: #fed34c;        --y3-rgb: 254, 211, 76;
+  --y4: #eaab00;        --y4-rgb: 234, 171, 0;
+  --peach: var(--y1);   --peach-rgb: var(--y1-rgb);
+  --pink: var(--y2);    --pink-rgb: var(--y2-rgb);
+  --apricot: var(--y3); --apricot-rgb: var(--y3-rgb);
+  --ember: var(--y4);   --ember-rgb: var(--y4-rgb);
+  --sky: var(--y1);     --sky-rgb: var(--y1-rgb);
+  --amber: #000000;     --amber-rgb: 0, 0, 0;
+  --stripe: linear-gradient(90deg, var(--y1) 0 25%, var(--y2) 25% 50%, var(--y3) 50% 75%, var(--y4) 75%);
+  --display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
   --text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --hand: "Caveat", "Bradley Hand", cursive;
   --ease: cubic-bezier(.2, .7, .2, 1);
@@ -52,7 +70,7 @@ mark { background: var(--apricot); color: var(--ink); padding: 0 .2em; border-ra
   font-size: 14px; font-weight: 500; white-space: nowrap; transition: box-shadow .3s, background-color .3s;
 }
 .nav.scrolled { background: rgba(var(--surface-rgb), .9); box-shadow: 0 16px 32px -16px rgba(var(--ink-rgb), .28); }
-.nav strong { font: 600 16px var(--display); letter-spacing: -.02em; }
+.nav strong { font: 600 16px var(--display); letter-spacing: 0; }
 .nav a { text-decoration: none; color: var(--ink-2); transition: color .2s; }
 .nav a:hover { color: var(--ink); }
 .nav .links { display: flex; gap: 2px; }
@@ -79,23 +97,23 @@ mark { background: var(--apricot); color: var(--ink); padding: 0 .2em; border-ra
 .wash, .wash::after { position: absolute; inset: 0; z-index: -1; }
 .wash {
   background:
-    radial-gradient(46% 50% at 50% 46%, rgba(var(--page-rgb), .7), transparent 78%),
-    radial-gradient(55% 75% at 8% 8%, rgba(var(--ember-rgb), .95), transparent 62%),
-    radial-gradient(45% 65% at 94% 14%, rgba(var(--pink-rgb), .8), transparent 62%),
-    radial-gradient(40% 55% at 88% 100%, rgba(var(--sky-rgb), .5), transparent 62%),
-    radial-gradient(60% 55% at 22% 104%, rgba(var(--apricot-rgb), .9), transparent 62%),
-    var(--page);
+    radial-gradient(50% 55% at 50% 46%, rgba(var(--y1-rgb), .9), transparent 76%),
+    radial-gradient(55% 75% at 8% 8%, rgba(var(--y4-rgb), .95), transparent 62%),
+    radial-gradient(45% 65% at 94% 14%, rgba(var(--y2-rgb), .95), transparent 62%),
+    radial-gradient(40% 55% at 88% 100%, rgba(var(--y1-rgb), .9), transparent 62%),
+    radial-gradient(60% 55% at 22% 104%, rgba(var(--y4-rgb), .85), transparent 62%),
+    var(--y3);
   background-size: 100% 100%, 150% 150%, 150% 150%, 150% 150%, 150% 150%, auto;
   animation: drift 40s ease-in-out infinite alternate;
 }
-.wash::after { content: ""; opacity: .3; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.wash::after { content: ""; opacity: .18; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @keyframes drift {
   from { background-position: 0 0, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 0; }
   to { background-position: 0 0, 40% 30%, 60% 40%, 70% 60%, 30% 70%, 0 0; }
 }
-.hero .who { font: 600 19px var(--display); letter-spacing: -.02em; margin: 0 0 20px; }
-.hero h1 { font: 700 clamp(44px, 7.2vw, 96px)/1 var(--display); letter-spacing: -.045em; margin: 0 auto 24px; max-width: 12ch; text-wrap: balance; }
-.lead { font: 500 clamp(19px, 2.1vw, 26px)/1.2 var(--display); letter-spacing: -.02em; color: var(--ink-2); max-width: 30em; margin: 0 auto; text-wrap: balance; }
+.hero .who { display: inline-block; font: 700 30px/1 var(--display); letter-spacing: 0; margin: 0 0 24px; transform-origin: 50% 50%; }
+.hero h1 { font: 700 clamp(52px, 8.6vw, 124px)/.92 var(--display); letter-spacing: 0; margin: 0 auto 24px; max-width: 12ch; text-wrap: balance; }
+.lead { font: 400 clamp(18px, 1.8vw, 22px)/1.45 var(--text); letter-spacing: 0; color: var(--ink-2); max-width: 30em; margin: 0 auto; text-wrap: balance; }
 .hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 36px 0 28px; }
 
 /* Window */
@@ -116,7 +134,7 @@ mark { background: var(--apricot); color: var(--ink); padding: 0 .2em; border-ra
 .switch button[aria-pressed="true"]::before { transform: scale(1); background: var(--apricot); margin-left: 0; }
 .hint { margin-left: 4px; font: 500 24px/1 var(--hand); color: var(--amber); transform: rotate(-5deg); pointer-events: none; white-space: nowrap; }
 .hint svg { display: inline-block; vertical-align: -14px; margin-right: 4px; }
-.says { font: 600 clamp(21px, 2.4vw, 30px)/1.15 var(--display); letter-spacing: -.03em; margin: 0 0 24px; min-height: 2.3em; max-width: 26em; }
+.says { font: 600 clamp(21px, 2.4vw, 30px)/1.15 var(--display); letter-spacing: 0; margin: 0 0 24px; min-height: 2.3em; max-width: 26em; }
 .foot { font-size: 14px; color: var(--ink-3); margin: 20px 0 0; max-width: 72ch; }
 
 /* Strip */
@@ -124,7 +142,7 @@ mark { background: var(--apricot); color: var(--ink); padding: 0 .2em; border-ra
 .seg { flex: 1 0 0; min-width: 3px; background: var(--mute); overflow: hidden; white-space: nowrap; padding: 12px 14px; font-size: 14px; line-height: 1.3; transition: flex-grow .7s var(--morph); }
 .seg:first-child { border-radius: 10px 0 0 10px; } .seg:last-child { border-radius: 0 10px 10px 0; }
 .seg.key { background: var(--key); color: var(--on-key); }
-.seg b { display: block; font: 700 28px/1.1 var(--display); letter-spacing: -.03em; }
+.seg b { display: block; font: 700 28px/1.1 var(--display); letter-spacing: 0; }
 .seg span { display: block; overflow: hidden; text-overflow: ellipsis; }
 .seg.tight { padding: 0; } .seg.tight > * { visibility: hidden; }
 
@@ -154,7 +172,9 @@ table.vals { width: 100%; border-collapse: collapse; margin-top: 24px; font-size
 
 /* Sections */
 .statement { padding: 180px 0 140px; text-align: center; }
-h2.big { font: 700 clamp(34px, 5vw, 64px)/1 var(--display); letter-spacing: -.045em; margin: 0 auto 20px; max-width: 16ch; text-wrap: balance; }
+h2.big::after { content: ""; display: block; width: 120px; height: 8px; margin: 24px auto 0; background: var(--stripe); border-radius: 2px; }
+.contact h2.big::after { display: none; }
+h2.big { font: 700 clamp(34px, 5vw, 64px)/1 var(--display); letter-spacing: 0; margin: 0 auto 20px; max-width: 16ch; text-wrap: balance; }
 .statement h2.big { max-width: 18ch; }
 .features { display: grid; gap: 32px; }
 .feature { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 32px; padding: 20px 20px 44px; overflow: hidden; scroll-margin-top: 96px; }
@@ -162,7 +182,10 @@ h2.big { font: 700 clamp(34px, 5vw, 64px)/1 var(--display); letter-spacing: -.04
 .feature:hover::before { opacity: 1; }
 .feature .window { position: relative; box-shadow: none; border-radius: 20px; }
 .feature .text { position: relative; padding: 40px 24px 0; max-width: 860px; }
-.feature h3 { font: 700 clamp(26px, 3.2vw, 40px)/1.05 var(--display); letter-spacing: -.04em; margin: 0 0 12px; }
+.feature { border-top: 0; }
+.feature::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px; background: var(--stripe); }
+.feature .window { margin-top: 8px; }
+.feature h3 { font: 700 clamp(26px, 3.2vw, 40px)/1.05 var(--display); letter-spacing: 0; margin: 0 0 12px; }
 .feature .lead { margin: 0 0 20px; text-align: left; max-width: none; }
 .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; font-size: 15px; color: var(--ink-3); margin: 0; }
 .meta a { color: var(--ink); font-weight: 500; }
@@ -174,19 +197,62 @@ h2.big { font: 700 clamp(34px, 5vw, 64px)/1 var(--display); letter-spacing: -.04
 .method { padding: 160px 0 0; text-align: center; }
 .method .lead { margin-bottom: 56px; }
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: left; }
-.tile { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; }
-.tile:last-child { background: rgba(var(--apricot-rgb), .22); border-color: rgba(var(--apricot-rgb), .6); }
-.tile svg { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--surface); margin-bottom: 28px; }
-.tile:last-child svg { background: var(--key); color: var(--on-key); }
-.tile h3 { font: 600 21px/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 8px; }
+.tile { background: var(--y1); border: 0; border-radius: 24px; padding: 28px; }
+.tile svg { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--ink); color: var(--y2); margin-bottom: 28px; }
+.tile h3 { font: 600 21px/1.2 var(--display); letter-spacing: 0; margin: 0 0 8px; }
 .tile p { margin: 0; color: var(--ink-2); font-size: 16px; }
+.tile:nth-child(2) { background: var(--y3); }
+.tile:nth-child(3) { background: var(--y4); }
+.tile:nth-child(3) p { color: var(--ink); }
+.tile h3 { font-size: 26px; }
 
 .contact { position: relative; margin: 160px 12px 12px; border-radius: 28px; overflow: hidden; padding: 120px 24px; text-align: center; isolation: isolate; }
+/* Hero headline entrance: each line arrives its own way, then "changes." grows in from small, overshoots and settles */
+.intro .l { display: block; }
+.js .intro .l { opacity: 0; animation: 1.5s var(--ease) forwards; }
+.js .intro .l1 { animation-name: in-drop; animation-delay: .3s; }
+.js .intro .l2 { animation-name: in-up; animation-delay: .75s; }
+.js .intro .l3 { animation-name: in-left; animation-delay: 1.2s; }
+.js .intro .l4 { animation-name: in-right; animation-delay: 1.65s; }
+.js .intro .l5 { animation: grow-in 2.4s cubic-bezier(.3, 0, .3, 1) forwards 2.1s; }
+@keyframes in-drop { from { opacity: 0; transform: translateY(-.35em); } to { opacity: 1; transform: none; } }
+@keyframes in-up { from { opacity: 0; transform: translateY(.8em); } to { opacity: 1; transform: none; } }
+@keyframes in-left { from { opacity: 0; transform: translateX(-1.6em); } to { opacity: 1; transform: none; } }
+@keyframes in-right { from { opacity: 0; transform: translateX(1.6em); } to { opacity: 1; transform: none; } }
+@keyframes in-fade { to { opacity: 1; } }
+@keyframes grow-in { 0% { opacity: 0; transform: scale(.35); } 25% { opacity: 1; } 60% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+/* Opening: the name fills the screen, moves up into place, then the headline starts (.go) */
+.js:not(.seen) .hero:not(.go) .intro .l, .js:not(.seen) .hero:not(.go) .fade-in { animation-name: none !important; }
+.hero .who .ch { display: inline-block; white-space: pre; }
+.js.intro-run .nav, .js.intro-run .hero .who { opacity: 0; }
+/* Later page views in the same visit: no opening, headline already in place */
+.js.seen .intro .l, .js.seen .hero .fade-in { animation: none !important; opacity: 1; transform: none; }
+.nav { transition: opacity .8s ease, box-shadow .3s, background-color .3s; }
+.js.intro-run body { overflow: hidden; }
+.js .hero .lead.fade-in, .js .hero .cta.fade-in, .js .hero .chips.fade-in { animation-delay: 3.9s; animation-duration: 1.2s; }
+/* Home hero: plain white, no moving gradient */
+.hero { background: var(--page); }
+.hero .wash { display: none; }
+.contact { background: var(--ink); color: var(--on-key); }
+.contact .wash { display: none; }
+.contact h2.big { color: var(--y3); }
+.contact .lead { color: rgba(255, 255, 255, .72); }
+.contact .btn.primary { background: var(--y3); color: var(--ink); }
+.contact .btn.ghost { background: transparent; color: var(--on-key); border-color: rgba(255, 255, 255, .3); }
+.contact .btn.ghost:hover { background: rgba(255, 255, 255, .1); }
 .contact .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 36px; }
 footer { padding: 28px 32px 40px; text-align: center; font-size: 13px; color: var(--ink-3); max-width: 780px; margin: 0 auto; }
 
 .toast { position: fixed; z-index: 40; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--ink); color: var(--page); font-size: 15px; font-weight: 500; padding: 12px 18px; border-radius: 999px; box-shadow: 0 18px 36px -16px rgba(var(--ink-rgb), .5); transition: opacity .3s, transform .3s var(--ease); max-width: calc(100vw - 32px); text-align: center; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+/* Waterloo theme: four-yellow stripe, condensed display type */
+.stripe-under::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 12px; z-index: 1; background: var(--stripe); }
+h1 { text-transform: uppercase; }
+.nav a.pill { background: var(--y2); color: var(--ink); }
+.nav a.pill:hover { background: var(--y3); color: var(--ink); }
+.btn.primary:hover { box-shadow: 0 18px 30px -14px rgba(var(--y4-rgb), .9); }
+mark { background: var(--y2); color: var(--ink); }
+.switch button[aria-pressed="true"]::before { background: var(--y2); }
 #tip { position: fixed; z-index: 30; pointer-events: none; opacity: 0; background: var(--ink); color: var(--page); font-size: 13px; font-weight: 500; line-height: 1.4; padding: 7px 10px; border-radius: 8px; max-width: 280px; transition: opacity .1s; }
 [data-tip] { cursor: default; }
 
@@ -230,7 +296,7 @@ footer { padding: 28px 32px 40px; text-align: center; font-size: 13px; color: va
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .rise .w, .js .fade-in, .js .rv, .js [data-words] .w { opacity: 1; transform: none; }
+  .js .rise .w, .js .intro .l, .js .fade-in, .js .rv, .js [data-words] .w { opacity: 1; transform: none; }
   .hero-window { transform: none !important; }
 }
 </style>
@@ -249,10 +315,10 @@ footer { padding: 28px 32px 40px; text-align: center; font-size: 13px; color: va
 </nav>
 
 <main>
-  <header class="hero">
+  <header class="hero stripe-under">
     <div class="wash" aria-hidden="true"></div>
-    <p class="who fade-in">Mincheng Li, mathematics co-op student at the University of Waterloo</p>
-    <h1 class="rise" data-split>Change what you count and the answer changes.</h1>
+    <p class="who" aria-label="Mincheng Li">Mincheng Li</p>
+    <h1 class="intro"><span class="l l1">Change</span> <span class="l l2">what you</span> <span class="l l3">count and</span> <span class="l l4">the answer</span> <span class="l l5">changes.</span></h1>
     <p class="lead fade-in">Four projects built on public data. Each one comes down to a choice about what to measure, and you can flip that choice yourself.</p>
     <div class="cta fade-in">
       <a class="btn primary" href="#ontario">Try the first switch</a>
@@ -399,7 +465,7 @@ footer { padding: 28px 32px 40px; text-align: center; font-size: 13px; color: va
     </section>
   </div>
 
-  <section class="contact" id="contact">
+  <section class="contact stripe-under" id="contact">
     <div class="wash" aria-hidden="true"></div>
     <h2 class="big" data-split data-words>Get in touch.</h2>
     <p class="lead rv">mincheng.li@uwaterloo.ca</p>
@@ -418,6 +484,46 @@ const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => 
 const fmt = n => n.toLocaleString('en-CA');
 const p1 = x => (x < 0.95 ? x.toFixed(1) : Math.round(x)) + '%';
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- Opening (on arrival and on refresh): letters of the name bounce in one by one, alternating up and down, then the name moves up ---- */
+(() => {
+  const hero = $('.hero'), who = $('.hero .who'), root = document.documentElement;
+  who.innerHTML = [...who.textContent].map(c => `<span class="ch" aria-hidden="true">${c}</span>`).join('');
+  const chars = $$('.ch', who);
+  const go = () => {
+    chars.forEach(c => c.getAnimations().forEach(a => a.cancel()));
+    who.style.opacity = ''; who.style.transform = ''; hero.classList.add('go'); root.classList.remove('intro-run');
+  };
+  if (!root.classList.contains('intro-run')) return go();
+  if (scrollY > 40 || !who.animate) return go();
+  let started = false;
+  const start = () => {
+    if (started) return; started = true;
+    const r = who.getBoundingClientRect();
+    const s = Math.min(innerWidth * .78 / r.width, innerHeight * .38 / r.height);
+    const dx = innerWidth / 2 - (r.left + r.width / 2), dy = innerHeight / 2 - (r.top + r.height / 2);
+    const big = `translate(${dx}px, ${dy}px) scale(${s})`;
+    who.style.transform = big; who.style.opacity = 1;
+    const jumps = chars.filter(c => c.textContent.trim()).map((c, i) => {
+      const d = i % 2 ? -1 : 1;   // first letter rises from below, the next drops from above, and so on
+      return c.animate([
+        { transform: `translateY(${d * 1.1}em)`, opacity: 0 },
+        { transform: `translateY(${-d * .18}em)`, opacity: 1, offset: .6 },
+        { transform: `translateY(${d * .06}em)`, offset: .82 },
+        { transform: 'none', opacity: 1 }
+      ], { duration: 650, delay: 200 + i * 110, easing: 'cubic-bezier(.3, .7, .4, 1)', fill: 'both' }).finished;
+    });
+    Promise.all(jumps)
+      .then(() => new Promise(r => setTimeout(r, 300)))
+      .then(() => {
+        const move = who.animate([{ transform: big }, { transform: 'none' }], { duration: 1000, easing: 'cubic-bezier(.65, 0, .35, 1)' });
+        who.style.transform = '';
+        return move.finished;
+      })
+      .then(go, go);
+  };
+  (document.fonts ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]) : Promise.resolve()).then(start);
+})();
 
 /* ---- Proportion strips ---- */
 function strip(fig, rows, key, tips) {

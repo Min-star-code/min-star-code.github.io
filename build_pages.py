@@ -18,7 +18,7 @@ SHELL = """<!doctype html>
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/project.css">
 </head>
 <body>
@@ -29,7 +29,7 @@ SHELL = """<!doctype html>
 </nav>
 
 <main>
-  <header class="phead">
+  <header class="phead stripe-under">
     <div class="wash" aria-hidden="true"></div>
     <p class="made rise">@@MADE@@</p>
     <h1 class="rise" style="--i:1">@@TITLE@@</h1>

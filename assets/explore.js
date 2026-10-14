@@ -150,7 +150,8 @@
     el.innerHTML = `<span></span>` + C.map((c, j) => `<span class="h">${opts.tick ? opts.tick(j) : esc(c)}</span>`).join('') +
       R.map((r, i) => `<span class="r">${esc(opts.row ? opts.row(r) : r)}</span>` + C.map((c, j) => `<i class="c" data-ij="${i},${j}"></i>`).join('')).join('');
     const cells = [...el.querySelectorAll('.c')];
-    const ramp = t => t <= 0 ? 'var(--card)' : `color-mix(in srgb, ${t < .5 ? 'var(--apricot)' : 'var(--ink)'} ${Math.round((t < .5 ? t * 2 : (t - .5) * 2) * 100)}%, ${t < .5 ? 'var(--card)' : 'var(--amber)'})`;
+    const stops = ['var(--card)', 'var(--y1)', 'var(--y2)', 'var(--y3)', 'var(--y4)', 'var(--ink)'];
+    const ramp = t => { if (t <= 0) return stops[0]; const x = Math.min(t, 1) * (stops.length - 1), k = Math.min(Math.floor(x), stops.length - 2); return `color-mix(in srgb, ${stops[k + 1]} ${Math.round((x - k) * 100)}%, ${stops[k]})`; };
     ex.on(() => {
       const g = new Float64Array(R.length * C.length), of = ex.m.of;
       ex.each(i => { g[ex.dims[rk].of(i) * C.length + ex.dims[ck].of(i)] += of(i); });
