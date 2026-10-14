@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ontario infrastructure projects | Mincheng Li</title>
+<meta name="description" content="Interactive view of 5,935 Ontario infrastructure projects by category, region, status and budget.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/project.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <strong><a href="../index.html">Mincheng Li</a></strong>
+  <span class="links"><a href="ontario.html" aria-current="page">Ontario</a><a href="outbreaks.html">Outbreaks</a><a href="ttc.html">TTC</a><a href="adventureworks.html">AdventureWorks</a></span>
+  <a class="pill" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+</nav>
+
+<main>
+  <header class="phead">
+    <div class="wash" aria-hidden="true"></div>
+    <p class="made rise">SQL, Python and Tableau Public. October 2026.</p>
+    <h1 class="rise" style="--i:1">Ontario infrastructure projects</h1>
+    <p class="lead rise" style="--i:2">Where the province's published projects are, what stage they are at, and where the reported budget is concentrated.</p>
+    <div class="cta rise" style="--i:3"><a class="btn primary" href="https://public.tableau.com/app/profile/mincheng.li/viz/OntarioBuildsInfrastructureProjects">Open the Tableau dashboard</a><a class="btn ghost" href="https://github.com/Min-star-code/ontario-infrastructure-analysis">Read the code</a><a class="btn ghost" href="https://github.com/Min-star-code/ontario-infrastructure-analysis/blob/main/reports/briefing_note.md">Read the briefing note</a></div>
+  </header>
+
+  <div class="wrap">
+    <section class="explorer" aria-label="Interactive charts">
+      <div class="filters" id="filters"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid">
+        <section class="panel"><h2>By category</h2><p class="sub"><span data-mlabel></span> by project category. Click a bar to filter.</p><div id="cat"></div></section>
+        <section class="panel"><h2>By region</h2><p class="sub"><span data-mlabel></span> by region.</p><div id="reg"></div></section>
+        <section class="panel"><h2>By status</h2><p class="sub"><span data-mlabel></span> by reported status.</p><div id="sta"></div></section>
+        <section class="panel"><h2>By target completion year</h2><p class="sub"><span data-mlabel></span> by the year parsed from the completion date.</p><div id="yr"></div><p class="note">230 projects have no usable completion year and are not in this chart.</p></section>
+        <section class="panel wide"><h2>Project locations</h2><p class="sub">Each dot is one project. Dark dots match the current filters.</p><div class="map"><canvas id="map" role="img"></canvas></div><div class="legend"><span><i></i><span id="mapn"></span></span><span><i class="m"></i>All other projects with coordinates</span></div><p class="note">417 projects have no coordinates and do not appear. For 19 projects with several points, the first is plotted.</p></section>
+      </div>
+    </section>
+    <section class="prose"><h2>Cleaning decisions</h2><div><div class="scroll"><table class="tbl num"><thead><tr><th scope="col">Issue in the source</th><th scope="col" class="n">Rows</th><th scope="col">Decision</th></tr></thead><tbody><tr><td>Budget recorded as 0</td><td class="n">2,005</td><td>Treated as not reported, not as a $0 project</td></tr><tr><td>Completion date in mixed formats (27-Mar, Sep-34, 2026, March 2027)</td><td class="n">5,706</td><td>Reduced to a completion year; one unclear value left empty</td></tr><tr><td>Completion date "To Be Determined"</td><td class="n">229</td><td>Year left empty</td></tr><tr><td>Region blank or TBD</td><td class="n">626</td><td>Labelled Province-wide / not assigned</td></tr><tr><td>Status blank</td><td class="n">22</td><td>Labelled Not reported</td></tr><tr><td>Several coordinates in one cell</td><td class="n">19</td><td>First point kept for mapping, row flagged</td></tr><tr><td>Coordinates missing</td><td class="n">417</td><td>Left empty</td></tr><tr><td>Leading or trailing spaces</td><td class="n">1,127 cells</td><td>Trimmed</td></tr></tbody></table></div><p style="margin-top:16px">No rows are dropped: the clean file has the same 5,935 rows as the source.</p></div></section>
+    <section class="prose"><h2>What this data cannot show</h2><div><ul><li>This is a list of projects the province chose to publish, not all infrastructure spending.</li><li>Budgets are estimated totals over a project's life, not money spent to date, and a third of projects publish none. Category and region totals are lower bounds.</li><li>Budget coverage varies from 98% for child care to 20% for recreation, so comparisons between categories are unreliable.</li><li>Region totals are not adjusted for population.</li></ul></div></section>
+    <nav class="pager" aria-label="Other projects"><a href="adventureworks.html"><small>Previous project</small><b>AdventureWorks sales and profitability</b></a><a href="outbreaks.html"><small>Next project</small><b>Toronto healthcare outbreak records</b></a></nav>
+  </div>
+</main>
+<footer>Source: <a href="https://data.ontario.ca/dataset/ontario-builds-key-infrastructure-projects">Ontario Builds: key infrastructure projects</a>, Ontario Data Catalogue, file of 12 June 2026. Contains information licensed under the Open Government Licence – Ontario. Independent analysis, not endorsed by the Government of Ontario.</footer>
+
+<script src="../data/ontario.js"></script>
+<script src="../assets/explore.js"></script>
+<script>
+const { Explorer, filterBar, kpis, bars, cols, heat, dotMap, chrome, int, money, pct, $ } = EX, D = DATA;
+chrome();
+const Y0 = 2005, years = Array.from({ length: 2046 - Y0 + 1 }, (_, i) => String(Y0 + i));
+const ex = Explorer({
+  n: D.n, measure: 'projects',
+  dims: {
+    cat: { label: 'Category', all: 'All categories', values: D.cats, of: i => D.cat[i] },
+    reg: { label: 'Region', all: 'All regions', values: D.regs, of: i => D.reg[i] },
+    sta: { label: 'Status', all: 'All statuses', values: D.stas, of: i => D.sta[i] },
+    yr: { label: 'Completion year', all: 'All years', values: years, of: i => D.yr[i] ? D.yr[i] - Y0 : -1 }
+  },
+  measures: {
+    projects: { label: 'Projects', of: () => 1, fmt: int },
+    budget: { label: 'Reported budget', of: i => (D.bud[i] || 0) * 1e6, fmt: money }
+  }
+});
+filterBar($('#filters'), ex, { keys: ['cat', 'reg', 'sta'], count: ex => {
+  const n = ex.sum(() => 1), y = ex.f.yr != null ? `Completion year ${years[ex.f.yr]}. ` : '';
+  return `${int(n)} of 5,935 projects<small>${y}${ex.active().length ? 'Filtered' : 'No filters applied'}</small>`;
+} });
+kpis($('#kpis'), ex, [
+  ex => [int(ex.sum(() => 1)), 'Projects'],
+  ex => { const n = ex.sum(() => 1), b = ex.sum(i => D.bud[i] != null ? 1 : 0); return [n ? pct(b / n, 0) : '0%', 'Publish a budget', `${int(b)} of ${int(n)}`]; },
+  ex => [money(ex.sum(i => (D.bud[i] || 0) * 1e6)), 'Reported budget', 'A lower bound'],
+  ex => [int(ex.sum(i => D.sta[i] > 0 && D.sta[i] < 3 && D.yr[i] && D.yr[i] < 2026 ? 1 : 0)), 'Past their target year', 'Still planning or under construction']
+]);
+bars($('#cat'), ex, 'cat'); bars($('#reg'), ex, 'reg'); bars($('#sta'), ex, 'sta');
+cols($('#yr'), ex, 'yr', { tick: (i, y) => y % 5 === 0 ? y : '' });
+const map = $('#map');
+map.addEventListener('drawn', e => $('#mapn').textContent = `${int(e.detail.shown)} matching projects`);
+dotMap(map, ex, D.lat, D.lon);
+// Panel subtitles that name the current measure
+ex.on(() => document.querySelectorAll('[data-mlabel]').forEach(el => el.textContent = ex.m.label));
+</script>
+</body>
+</html>

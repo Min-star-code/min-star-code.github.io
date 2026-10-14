@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TTC subway delay incidents | Mincheng Li</title>
+<meta name="description" content="Interactive view of 25,737 TTC subway incidents in 2025 by cause, line and time of day, counted by incidents or by delay minutes.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/project.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <strong><a href="../index.html">Mincheng Li</a></strong>
+  <span class="links"><a href="ontario.html">Ontario</a><a href="outbreaks.html">Outbreaks</a><a href="ttc.html" aria-current="page">TTC</a><a href="adventureworks.html">AdventureWorks</a></span>
+  <a class="pill" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+</nav>
+
+<main>
+  <header class="phead">
+    <div class="wash" aria-hidden="true"></div>
+    <p class="made rise">Python, pandas and matplotlib. September 2026.</p>
+    <h1 class="rise" style="--i:1">TTC subway delay incidents</h1>
+    <p class="lead rise" style="--i:2">Which recorded incidents accounted for the most delay in 2025, compared by incident count and by delay minutes.</p>
+    <div class="cta rise" style="--i:3"><a class="btn primary" href="https://github.com/Min-star-code/ttc-subway-delay-analysis">Read the code</a><a class="btn ghost" href="https://github.com/Min-star-code/ttc-subway-delay-analysis/blob/main/reports/findings.md">Read the findings report</a></div>
+  </header>
+
+  <div class="wrap">
+    <section class="explorer" aria-label="Interactive charts">
+      <div class="filters" id="filters"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid">
+        <section class="panel wide"><h2>Top causes</h2><p class="sub"><span data-mlabel></span> for the 12 largest causes under the current filters. Click a bar to filter.</p><div id="cause"></div></section>
+        <section class="panel"><h2>By line</h2><p class="sub"><span data-mlabel></span> by line. Unadjusted totals, not a reliability rate.</p><div id="line"></div></section>
+        <section class="panel"><h2>By month</h2><p class="sub"><span data-mlabel></span> by month of 2025.</p><div id="mon"></div></section>
+        <section class="panel wide"><h2>By day and hour</h2><p class="sub"><span data-mlabel></span> for each weekday and hour of day. Darker is more.</p><div id="heat"></div><div class="scale" aria-hidden="true">Fewer<i></i>More</div><p class="note">Raw totals. The first and last hours of service are shorter than a full service hour.</p></section>
+        <section class="panel wide"><h2>By hour of day</h2><p class="sub"><span data-mlabel></span> by the hour the incident was logged.</p><div id="hr"></div></section>
+      </div>
+    </section>
+    <section class="prose"><h2>Method and data quality</h2><div><p>The analysis joins incident codes to the City's published cause descriptions, parses dates and times, and standardizes line aliases such as YUS and LINE 1.</p><p>Zero-minute incidents, missing line labels, multi-line labels and unmatched cause codes all stay visible. 145 records have codes absent from the description table; they are labelled as unmapped and no cause is guessed.</p><p>Invalid dates, times or negative delays would be excluded and counted. The 2025 snapshot has zero excluded records. Both input files are verified against SHA-256 checksums before each run.</p></div></section>
+    <section class="prose"><h2>What this data cannot show</h2><div><ul><li>Delay minutes are summed from individual incident rows. There is no passenger-level delay, train-service volume or other denominator for a reliability rate.</li><li>A cause code does not prove why a specific passenger was delayed.</li><li>16,642 of 25,737 incidents recorded zero delay minutes. They count as incidents and add nothing to minutes, which is why the two measures rank causes differently.</li><li>354 incidents are logged against more than one line and are kept as their own group.</li></ul></div></section>
+    <nav class="pager" aria-label="Other projects"><a href="outbreaks.html"><small>Previous project</small><b>Toronto healthcare outbreak records</b></a><a href="adventureworks.html"><small>Next project</small><b>AdventureWorks sales and profitability</b></a></nav>
+  </div>
+</main>
+<footer>Source: <a href="https://open.toronto.ca/dataset/996cfe8d-fb35-40ce-b569-698d51fc683b/">TTC Subway Delay Data</a>, City of Toronto Open Data, 2025 rows. Contains information licensed under the Open Government Licence – Toronto. Independent analysis, not endorsed by the City of Toronto or the TTC.</footer>
+
+<script src="../data/ttc.js"></script>
+<script src="../assets/explore.js"></script>
+<script>
+const { Explorer, filterBar, kpis, bars, cols, heat, dotMap, chrome, int, money, pct, $ } = EX, D = DATA;
+chrome();
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, '0')}:00`);
+const sentence = s => (s.charAt(0) + s.slice(1).toLowerCase()).replace(/\b(ttc|opto|paa|esa|atc)\b/gi, m => m.toUpperCase());
+const ex = Explorer({
+  n: D.n, measure: 'incidents',
+  dims: {
+    line: { label: 'Line', all: 'All lines', values: D.lines, of: i => D.line[i] },
+    cause: { label: 'Cause', all: 'All causes', values: D.causes.map(sentence), of: i => D.cause[i] },
+    day: { label: 'Day', all: 'All days', values: D.days, of: i => D.day[i] },
+    mon: { label: 'Month', all: 'All months', values: months, of: i => D.mon[i] - 1 },
+    hr: { label: 'Hour', all: 'All hours', values: hours, of: i => D.hr[i] }
+  },
+  measures: {
+    incidents: { label: 'Incidents', of: () => 1, fmt: int },
+    minutes: { label: 'Delay minutes', of: i => D.min[i], fmt: int }
+  }
+});
+filterBar($('#filters'), ex, { keys: ['line', 'day', 'mon'], count: ex => {
+  const extra = ['cause', 'hr'].filter(k => ex.f[k] != null).map(k => `${ex.dims[k].label}: ${ex.dims[k].values[ex.f[k]]}. `).join('');
+  return `${int(ex.sum(() => 1))} of 25,737 incidents<small>${extra}${ex.active().length ? 'Filtered' : 'No filters applied'}</small>`;
+} });
+kpis($('#kpis'), ex, [
+  ex => [int(ex.sum(() => 1)), 'Recorded incidents'],
+  ex => [int(ex.sum(i => D.min[i])), 'Recorded delay minutes'],
+  ex => { const n = ex.sum(() => 1), z = ex.sum(i => D.min[i] === 0 ? 1 : 0); return [n ? pct(z / n) : 'n/a', 'Recorded zero delay', `${int(z)} incidents`]; },
+  ex => { const p = ex.sum(i => D.min[i] > 0 ? 1 : 0), m = ex.sum(i => D.min[i]); return [p ? (m / p).toFixed(1) : 'n/a', 'Minutes per delaying incident', `${int(p)} incidents with a delay`]; }
+]);
+bars($('#cause'), ex, 'cause', { top: 12 });
+bars($('#line'), ex, 'line');
+cols($('#mon'), ex, 'mon');
+heat($('#heat'), ex, 'day', 'hr', { tick: j => j % 3 === 0 ? j : '', row: d => d.slice(0, 3), col: j => hours[j] });
+cols($('#hr'), ex, 'hr', { tick: i => i % 3 === 0 ? i : '' });
+// Panel subtitles that name the current measure
+ex.on(() => document.querySelectorAll('[data-mlabel]').forEach(el => el.textContent = ex.m.label));
+</script>
+</body>
+</html>

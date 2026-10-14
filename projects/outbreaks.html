@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toronto healthcare outbreak records | Mincheng Li</title>
+<meta name="description" content="Interactive view of 7,029 Toronto healthcare outbreak records, 2016 to 2026, with the data quality checks behind them.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/project.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <strong><a href="../index.html">Mincheng Li</a></strong>
+  <span class="links"><a href="ontario.html">Ontario</a><a href="outbreaks.html" aria-current="page">Outbreaks</a><a href="ttc.html">TTC</a><a href="adventureworks.html">AdventureWorks</a></span>
+  <a class="pill" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+</nav>
+
+<main>
+  <header class="phead">
+    <div class="wash" aria-hidden="true"></div>
+    <p class="made rise">Python, SQL and Excel. October 2026.</p>
+    <h1 class="rise" style="--i:1">Toronto healthcare outbreak records</h1>
+    <p class="lead rise" style="--i:2">Eleven yearly files from Toronto Public Health combined into one validated table of 7,029 outbreaks.</p>
+    <div class="cta rise" style="--i:3"><a class="btn primary" href="https://github.com/Min-star-code/toronto-outbreak-data-quality">Read the code</a><a class="btn ghost" href="https://github.com/Min-star-code/toronto-outbreak-data-quality/blob/main/data_dictionary.md">Read the data dictionary</a><a class="btn ghost" href="https://github.com/Min-star-code/toronto-outbreak-data-quality/blob/main/reports/data_quality_report.md">Read the quality report</a></div>
+  </header>
+
+  <div class="wrap">
+    <section class="explorer" aria-label="Interactive charts">
+      <div class="filters" id="filters"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid">
+        <section class="panel wide"><h2>Outbreaks per year</h2><p class="sub">By the year of the source file. Click a column to filter.</p><div id="yr"></div><p class="note">2026 covers 1 January to 5 October.</p></section>
+        <section class="panel"><h2>By causative agent</h2><p class="sub">66 free-text labels grouped into 13 by keyword rules.</p><div id="agt"></div></section>
+        <section class="panel"><h2>By setting</h2><p class="sub">Where the outbreak was declared.</p><div id="set"></div></section>
+        <section class="panel"><h2>By month the outbreak began</h2><p class="sub">All selected years combined.</p><div id="mon"></div></section>
+        <section class="panel"><h2>By duration</h2><p class="sub">Days from start to declared over.</p><div id="dur"></div><p class="note">Active outbreaks have no end date and are shown separately.</p></section>
+      </div>
+    </section>
+    <section class="prose"><h2>Twelve validation rules</h2><div><p>Each rule is a SQL query that counts the records failing it. Failing records are flagged and kept; nothing is deleted.</p><div class="scroll"><table class="tbl num"><thead><tr><th scope="col">Rule</th><th scope="col">Check</th><th scope="col" class="n">Failing records</th></tr></thead><tbody><tr><td>R1</td><td>Required fields are present</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R2</td><td>Setting is one of the seven published values</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R3</td><td>Type is Respiratory, Enteric or Other</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R4</td><td>End date is not before the start date</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R5</td><td>Start year matches the yearly file it came from</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R6</td><td>Active flag agrees with the end date</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R7</td><td>No duplicate records</td><td class="n"><span class="flag">6</span></td></tr><tr><td>R8</td><td>Duration is 90 days or less</td><td class="n"><span class="flag">18</span></td></tr><tr><td>R9</td><td>Causative agent was identified</td><td class="n"><span class="flag">671</span></td></tr><tr><td>R10</td><td>First agent field names a single agent</td><td class="n"><span class="flag">4</span></td></tr><tr><td>R11</td><td>Outbreak type agrees with the agent</td><td class="n"><span class="ok">0</span></td></tr><tr><td>R12</td><td>Institution name is complete</td><td class="n"><span class="flag">100</span></td></tr></tbody></table></div></div></section>
+    <section class="prose"><h2>Cleaning decisions</h2><div><div class="scroll"><table class="tbl num"><thead><tr><th scope="col">Issue in the source</th><th scope="col">Decision</th></tr></thead><tbody><tr><td>The 2020 file names two columns differently</td><td>Column names aligned before combining</td></tr><tr><td>Unit appended to the institution name (Michael Garron Hospital - H6)</td><td>Split into facility name and unit; original kept</td></tr><tr><td>One site under many names</td><td>Not merged by guesswork. Grouped by normalized address and labelled with the most common name there</td></tr><tr><td>Address punctuation and case vary (St. Clair, St.Clair)</td><td>Compared with punctuation, spaces and case removed</td></tr><tr><td>Agent labels vary (Enterovirus/Rhinovirus, Enterovirus/ Rhinovirus)</td><td>Grouped by keyword; original kept</td></tr><tr><td>Second agent blank in 5,711 records and "None" in 1,018</td><td>Both stored as empty</td></tr><tr><td>Active outbreaks have no end date</td><td>Duration left empty, not zero</td></tr></tbody></table></div></div></section>
+    <section class="prose"><h2>What this data cannot show</h2><div><ul><li>Counts are reported outbreaks, not cases. There is no number of people affected and no facility size, so risk cannot be compared between facilities.</li><li>Changes over time partly reflect reporting practice: COVID-19 outbreak definitions and testing changed between 2020 and 2026.</li><li>Grouping by address is imperfect. A few addresses host units of several hospitals, and a facility that moved appears as two sites.</li><li>2026 is a partial year.</li></ul></div></section>
+    <nav class="pager" aria-label="Other projects"><a href="ontario.html"><small>Previous project</small><b>Ontario infrastructure projects</b></a><a href="ttc.html"><small>Next project</small><b>TTC subway delay incidents</b></a></nav>
+  </div>
+</main>
+<footer>Source: <a href="https://open.toronto.ca/dataset/outbreaks-in-toronto-healthcare-institutions/">Outbreaks in Toronto Healthcare Institutions</a>, Toronto Public Health, City of Toronto Open Data, downloaded 11 October 2026. Contains information licensed under the Open Government Licence – Toronto. Independent analysis, not endorsed by the City of Toronto.</footer>
+
+<script src="../data/outbreaks.js"></script>
+<script src="../assets/explore.js"></script>
+<script>
+const { Explorer, filterBar, kpis, bars, cols, heat, dotMap, chrome, int, money, pct, $ } = EX, D = DATA;
+chrome();
+const years = Array.from({ length: 11 }, (_, i) => String(2016 + i));
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const settings = D.settings.map(s => s === 'LTCH' ? 'Long-term care home' : s.replace('Hospital-', 'Hospital, ').replace('Care', 'care').replace('Home', 'home').replace('Psychiatric', 'psychiatric').replace('Acute', 'acute').replace('Chronic', 'chronic'));
+const buckets = ['0 to 7', '8 to 14', '15 to 21', '22 to 30', '31 to 60', '61 to 90', 'Over 90', 'Active'];
+const bucket = d => d == null ? 7 : d <= 7 ? 0 : d <= 14 ? 1 : d <= 21 ? 2 : d <= 30 ? 3 : d <= 60 ? 4 : d <= 90 ? 5 : 6;
+const covid = D.agents.indexOf('COVID-19');
+const ex = Explorer({
+  n: D.n, measure: 'count',
+  dims: {
+    yr: { label: 'Year', all: 'All years', values: years, of: i => D.yr[i] - 2016 },
+    set: { label: 'Setting', all: 'All settings', values: settings, of: i => D.set[i] },
+    typ: { label: 'Type', all: 'All types', values: D.types, of: i => D.typ[i] },
+    agt: { label: 'Causative agent', all: 'All agents', values: D.agents, of: i => D.agt[i] },
+    mon: { label: 'Start month', all: 'All months', values: months, of: i => D.mon[i] - 1 },
+    dur: { label: 'Duration', all: 'Any duration', values: buckets, of: i => bucket(D.dur[i]) }
+  },
+  measures: { count: { label: 'Outbreaks', of: () => 1, fmt: int } }
+});
+filterBar($('#filters'), ex, { keys: ['yr', 'set', 'typ', 'agt'], count: ex => {
+  const extra = ['mon', 'dur'].filter(k => ex.f[k] != null).map(k => `${ex.dims[k].label}: ${ex.dims[k].values[ex.f[k]]}. `).join('');
+  return `${int(ex.sum(() => 1))} of 7,029 outbreaks<small>${extra}${ex.active().length ? 'Filtered' : 'No filters applied'}</small>`;
+} });
+kpis($('#kpis'), ex, [
+  ex => [int(ex.sum(() => 1)), 'Outbreaks'],
+  ex => { const d = []; ex.each(i => { if (D.dur[i] != null) d.push(D.dur[i]); }); d.sort((a, b) => a - b);
+    const m = d.length ? (d.length % 2 ? d[(d.length - 1) / 2] : (d[d.length / 2 - 1] + d[d.length / 2]) / 2) : null;
+    return [m == null ? 'n/a' : `${m} days`, 'Median duration', `${int(d.length)} closed outbreaks`]; },
+  ex => { let c = 0, l = 0; ex.each(i => { if (D.dur[i] != null) { c++; if (D.dur[i] > 30) l++; } }); return [c ? pct(l / c) : 'n/a', 'Lasted over 30 days', `${int(l)} of ${int(c)} closed`]; },
+  ex => { const n = ex.sum(() => 1), c = ex.sum(i => D.agt[i] === covid ? 1 : 0); return [n ? pct(c / n) : 'n/a', 'COVID-19', `${int(c)} outbreaks`]; }
+]);
+cols($('#yr'), ex, 'yr');
+bars($('#agt'), ex, 'agt'); bars($('#set'), ex, 'set');
+cols($('#mon'), ex, 'mon');
+bars($('#dur'), ex, 'dur', { sort: 'index', keepZero: true });
+// Panel subtitles that name the current measure
+ex.on(() => document.querySelectorAll('[data-mlabel]').forEach(el => el.textContent = ex.m.label));
+</script>
+</body>
+</html>
