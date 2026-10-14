@@ -4,7 +4,7 @@ References: colour and atmosphere from [getuni.co](https://www.getuni.co/); layo
 
 ## 1. Visual theme and atmosphere
 
-A light, warm page with coffee-brown text that behaves like screen.movie: everything centred, very large tight headlines, a floating pill nav, and big rounded "windows" that hold the live charts the way that site holds its app screenshots. The colour comes from Uni: a soft, grainy peach, pink and apricot wash with a cool blue edge, and pill buttons.
+A black, white and yellow page in the University of Waterloo's colours that behaves like screen.movie: everything centred, very large tight headlines, a floating pill nav, and big rounded "windows" that hold the live charts the way that site holds its app screenshots. The colour comes from Uni: a soft, grainy peach, pink and apricot wash with a cool blue edge, and pill buttons.
 
 Keywords: warm, soft light, confident, precise, hands-on.
 One line: a sunrise-coloured page where each project is a window you can flip between two answers.
@@ -13,58 +13,39 @@ The core idea stays from the previous version: each project has one switch that 
 
 ## 2. Colour palette and roles
 
-Approved version: light warm base with deep coffee-brown text (not pure black), Uni's peach, pink and apricot as a soft wash.
+Current version: the University of Waterloo's black, white and yellow, using the four yellows from the university's header stripe many times instead of once.
 
 ```css
 :root {
-  --page: #fdf9f5;      --page-rgb: 253, 249, 245;    /* page background */
-  --surface: #ffffff;   --surface-rgb: 255, 255, 255; /* chart windows, panels, nav */
-  --card: #f9f0e8;      --card-rgb: 249, 240, 232;    /* feature and method cards, controls */
-  --ink: #2b1a14;       --ink-rgb: 43, 26, 20;        /* text */
-  --ink-2: rgba(43, 26, 20, .64);                     /* large secondary text */
-  --ink-3: rgba(43, 26, 20, .48);                     /* captions, meta */
-  --line: rgba(43, 26, 20, .10);                      /* hairlines, borders */
-  --key: #2b1a14;       --on-key: #ffffff;            /* highlighted data marks and their labels */
-  --mute: #f3d6c7;                                    /* all other data marks */
-  --neg: #d9622f;                                     /* negative values in diverging bars */
-  --peach: #f9d5c5;     --peach-rgb: 249, 213, 197;   /* wash */
-  --pink: #f7c3ce;      --pink-rgb: 247, 195, 206;    /* wash */
-  --apricot: #f6b592;   --apricot-rgb: 246, 181, 146; /* wash, highlight behind key figures */
-  --ember: #f2946a;     --ember-rgb: 242, 148, 106;   /* wash hot spot, window glow */
-  --sky: #b8cdf2;       --sky-rgb: 184, 205, 242;     /* wash cool edge */
-  --amber: #d9622f;     --amber-rgb: 217, 98, 47;     /* focus ring, hand note */
+  --page: #ffffff;   --surface: #ffffff;   --card: #fbf8e4;   /* page, panels, card tint */
+  --ink: #000000;    --ink-2: rgba(0, 0, 0, .68);   --ink-3: rgba(0, 0, 0, .52);   --line: rgba(0, 0, 0, .12);
+  --y1: #f2eda8;   /* pale yellow */
+  --y2: #fae100;   /* lemon */
+  --y3: #fed34c;   /* gold */
+  --y4: #eaab00;   /* deep gold */
+  --key: #000000;  --on-key: #ffffff;  --mute: var(--y1);  --neg: var(--y4);
+  --stripe: linear-gradient(90deg, var(--y1) 0 25%, var(--y2) 25% 50%, var(--y3) 50% 75%, var(--y4) 75%);
 }
 ```
 
 Roles
-- Text is always the coffee ink or its two alphas, except white text on ink fills (primary button, selected switch or filter, key data segment).
-- Data: the highlighted or selected entity is `--key`; every other mark is `--mute`; negative values are `--neg`. Gaps between marks are 2px.
-- The key figure in each result sentence sits on an `--apricot` highlight.
-- The wash appears only in the hero frame, the project page headers, the glow under chart windows and the contact frame. Its centre is lightened so text keeps its contrast.
+- Text is black or its two alphas; white only on black fills.
+- Data: highlighted entity black, other marks pale yellow, negative values deep gold. The heatmap runs pale, lemon, gold, deep gold, black.
+- Key figures in result sentences, the selected filter and the Email button use lemon.
+- The four-yellow stripe appears under the project page headers, above each project card, under section headings and under the contact panel. Method tiles step through pale, gold and deep gold; KPI tiles carry one yellow each.
+- The home hero is plain white with no moving gradient. Project page headers keep a soft yellow wash. The contact panel is black with a gold heading, after the university's call-to-action blocks.
 
 ## 3. Typography
 
 ```css
-@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap");
---display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap");
+--display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;   /* the university's own fallback for its condensed headline face */
 --text: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
---hand: "Caveat", "Bradley Hand", cursive;
 ```
 
-| Role | Font | Size (desktop / mobile) | Line | Weight | Tracking |
-|---|---|---|---|---|---|
-| H1 hero | Inter Tight | 88 / 44 | 1.0 | 700 | -0.045em |
-| H2 section | Inter Tight | 60 / 34 | 1.0 | 700 | -0.045em |
-| H3 card | Inter Tight | 38 / 26 | 1.05 | 700 | -0.04em |
-| Lead (secondary) | Inter Tight | 26 / 19 | 1.2 | 500 | -0.02em, colour `--ink-2` |
-| Result sentence | Inter Tight | 28 / 21 | 1.15 | 600 | -0.03em |
-| Body | Inter | 17 / 16 | 1.55 | 400 | 0 |
-| UI, chips, table | Inter | 14 | 1.3 | 500 | 0 |
-| Hand note | Caveat | 24 | 1 | 500 | 0 |
+Headings use Barlow Condensed with near-normal tracking; page titles (h1) are uppercase. Body, lead paragraphs, controls and tables use Inter. Numbers use tabular figures.
 
-Numbers use `font-variant-numeric: tabular-nums`. Forbidden: serif faces, monospace labels, all-caps tracked eyebrows, gradient-filled text.
-
-Text decoration: headings are solid ink. No gradient or shadow on type; the wash behind the hero already carries the colour.
+Home opening: on a fresh arrival or a refresh, the letters of "Mincheng Li" bounce in one at a time in the centre of the screen, alternating from below and above; after a 0.3 s pause the name moves up into place over 1 s. Then the headline lines arrive in turn (from above, below, left, right; 1.5 s each, 0.45 s apart) and "changes." grows in from small, overshoots and settles. Returning from another page of the site skips the opening. Reduced motion shows everything still.
 
 ## 4. Components
 
