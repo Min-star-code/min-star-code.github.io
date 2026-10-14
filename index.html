@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mincheng Li | Data projects</title>
+<meta name="description" content="Four public-data projects by Mincheng Li. Each one turns on a choice about what to measure.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --page: #fdf9f5;      --page-rgb: 253, 249, 245;
+  --surface: #ffffff;   --surface-rgb: 255, 255, 255;
+  --card: #f9f0e8;      --card-rgb: 249, 240, 232;
+  --ink: #2b1a14;       --ink-rgb: 43, 26, 20;
+  --ink-2: rgba(43, 26, 20, .64);
+  --ink-3: rgba(43, 26, 20, .48);
+  --line: rgba(43, 26, 20, .10);
+  --mute: #f3d6c7;
+  --key: #2b1a14;       --on-key: #ffffff;
+  --peach: #f9d5c5;     --peach-rgb: 249, 213, 197;
+  --pink: #f7c3ce;      --pink-rgb: 247, 195, 206;
+  --apricot: #f6b592;   --apricot-rgb: 246, 181, 146;
+  --ember: #f2946a;     --ember-rgb: 242, 148, 106;
+  --sky: #b8cdf2;       --sky-rgb: 184, 205, 242;
+  --amber: #d9622f;     --amber-rgb: 217, 98, 47;
+  --display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --hand: "Caveat", "Bradley Hand", cursive;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --morph: cubic-bezier(.6, 0, .2, 1);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 96px; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 17px/1.55 var(--text); overflow-x: hidden; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; border-radius: 6px; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+mark { background: var(--apricot); color: var(--ink); padding: 0 .2em; border-radius: 6px; }
+
+/* Nav */
+.nav {
+  position: fixed; z-index: 20; top: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 28px; height: 56px; padding: 0 8px 0 22px; border-radius: 999px;
+  background: rgba(var(--surface-rgb), .72); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  font-size: 14px; font-weight: 500; white-space: nowrap; transition: box-shadow .3s, background-color .3s;
+}
+.nav.scrolled { background: rgba(var(--surface-rgb), .9); box-shadow: 0 16px 32px -16px rgba(var(--ink-rgb), .28); }
+.nav strong { font: 600 16px var(--display); letter-spacing: -.02em; }
+.nav a { text-decoration: none; color: var(--ink-2); transition: color .2s; }
+.nav a:hover { color: var(--ink); }
+.nav .links { display: flex; gap: 2px; }
+.nav .links a { height: 40px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; transition: color .2s, background-color .3s; }
+.nav .links a.on, .nav .links a.on:hover { background: var(--ink); color: var(--page); font-weight: 600; }
+.nav a.pill { background: var(--apricot); color: var(--ink); height: 40px; padding: 0 18px; border-radius: 999px; display: inline-flex; align-items: center; font-weight: 600; transition: background-color .2s; }
+.nav a.pill:hover { background: var(--ember); color: var(--ink); }
+
+/* Buttons and chips */
+.btn {
+  display: inline-flex; align-items: center; height: 52px; padding: 0 26px; border-radius: 999px;
+  font: 600 17px var(--text); text-decoration: none; transition: transform .25s var(--ease), box-shadow .25s var(--ease), background-color .2s;
+}
+.btn.primary { background: var(--ink); color: var(--page); }
+.btn.primary:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -14px rgba(var(--apricot-rgb), .8); }
+.btn.ghost { background: rgba(var(--surface-rgb), .7); color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { transform: translateY(-2px); background: var(--surface); box-shadow: 0 14px 26px -16px rgba(var(--ink-rgb), .35); }
+.btn:active { transform: scale(.98); }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.chips li { height: 32px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 500; color: var(--ink-2); background: rgba(var(--surface-rgb), .6); border: 1px solid var(--line); }
+
+/* Hero */
+.hero { position: relative; margin: 12px; border-radius: 28px; overflow: hidden; padding: 180px 24px 240px; text-align: center; isolation: isolate; }
+.wash, .wash::after { position: absolute; inset: 0; z-index: -1; }
+.wash {
+  background:
+    radial-gradient(46% 50% at 50% 46%, rgba(var(--page-rgb), .7), transparent 78%),
+    radial-gradient(55% 75% at 8% 8%, rgba(var(--ember-rgb), .95), transparent 62%),
+    radial-gradient(45% 65% at 94% 14%, rgba(var(--pink-rgb), .8), transparent 62%),
+    radial-gradient(40% 55% at 88% 100%, rgba(var(--sky-rgb), .5), transparent 62%),
+    radial-gradient(60% 55% at 22% 104%, rgba(var(--apricot-rgb), .9), transparent 62%),
+    var(--page);
+  background-size: 100% 100%, 150% 150%, 150% 150%, 150% 150%, 150% 150%, auto;
+  animation: drift 40s ease-in-out infinite alternate;
+}
+.wash::after { content: ""; opacity: .3; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@keyframes drift {
+  from { background-position: 0 0, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 0; }
+  to { background-position: 0 0, 40% 30%, 60% 40%, 70% 60%, 30% 70%, 0 0; }
+}
+.hero .who { font: 600 19px var(--display); letter-spacing: -.02em; margin: 0 0 20px; }
+.hero h1 { font: 700 clamp(44px, 7.2vw, 96px)/1 var(--display); letter-spacing: -.045em; margin: 0 auto 24px; max-width: 12ch; text-wrap: balance; }
+.lead { font: 500 clamp(19px, 2.1vw, 26px)/1.2 var(--display); letter-spacing: -.02em; color: var(--ink-2); max-width: 30em; margin: 0 auto; text-wrap: balance; }
+.hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 36px 0 28px; }
+
+/* Window */
+.window { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 60px 120px -50px rgba(var(--ember-rgb), .7), 0 2px 6px rgba(var(--ink-rgb), .04); text-align: left; overflow: hidden; }
+.window .bar { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 500; color: var(--ink-3); }
+.window .bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--mute); }
+.window .bar span { margin-left: 10px; }
+.window .body { padding: 36px 40px 32px; }
+.hero-window { position: relative; z-index: 2; margin-top: -170px; transform-origin: 50% 0; will-change: transform; }
+
+.ask { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 24px; }
+.ask > span { font-size: 15px; color: var(--ink-2); }
+.switch { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); }
+.switch button { font: 500 15px/1 var(--text); color: var(--ink-2); background: none; border: 0; border-radius: 999px; height: 36px; min-height: 36px; padding: 0 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background-color .3s, color .3s; }
+.switch button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); transform: scale(0); transition: transform .3s var(--ease); margin-left: -4px; }
+.switch button:hover { color: var(--ink); }
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--page); font-weight: 600; }
+.switch button[aria-pressed="true"]::before { transform: scale(1); background: var(--apricot); margin-left: 0; }
+.hint { margin-left: 4px; font: 500 24px/1 var(--hand); color: var(--amber); transform: rotate(-5deg); pointer-events: none; white-space: nowrap; }
+.hint svg { display: inline-block; vertical-align: -14px; margin-right: 4px; }
+.says { font: 600 clamp(21px, 2.4vw, 30px)/1.15 var(--display); letter-spacing: -.03em; margin: 0 0 24px; min-height: 2.3em; max-width: 26em; }
+.foot { font-size: 14px; color: var(--ink-3); margin: 20px 0 0; max-width: 72ch; }
+
+/* Strip */
+.strip { display: flex; gap: 2px; height: 96px; }
+.seg { flex: 1 0 0; min-width: 3px; background: var(--mute); overflow: hidden; white-space: nowrap; padding: 12px 14px; font-size: 14px; line-height: 1.3; transition: flex-grow .7s var(--morph); }
+.seg:first-child { border-radius: 10px 0 0 10px; } .seg:last-child { border-radius: 0 10px 10px 0; }
+.seg.key { background: var(--key); color: var(--on-key); }
+.seg b { display: block; font: 700 28px/1.1 var(--display); letter-spacing: -.03em; }
+.seg span { display: block; overflow: hidden; text-overflow: ellipsis; }
+.seg.tight { padding: 0; } .seg.tight > * { visibility: hidden; }
+
+table.vals { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 15px; }
+.vals th, .vals td { text-align: right; padding: 8px 0 8px 16px; border-bottom: 1px solid var(--line); font-weight: 400; }
+.vals th:first-child, .vals td:first-child { text-align: left; padding-left: 0; }
+.vals thead th { font-size: 13px; color: var(--ink-3); }
+.vals td { color: var(--ink-3); transition: color .3s; }
+.vals td:first-child { color: var(--ink); }
+.vals i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--mute); margin-right: 10px; }
+.vals i.key { background: var(--key); }
+[data-m="a"] .vals .a, [data-m="b"] .vals .b { color: var(--ink); font-weight: 600; }
+
+/* Ranked bars */
+.rank { position: relative; --row: 34px; }
+.rank .r { position: absolute; left: 0; right: 0; top: 0; height: var(--row); display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 1fr) 60px; gap: 12px; align-items: center; font-size: 14px; transition: transform .7s var(--morph); }
+.rank .l, .names .l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank .t, .names .t { height: 14px; }
+.bar-fill { height: 100%; min-width: 2px; background: var(--key); border-radius: 0 5px 5px 0; transition: width .7s var(--morph); }
+.rank .v, .names .v { text-align: right; }
+
+/* Names */
+.names { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.names li { display: grid; grid-template-columns: minmax(0, 54%) minmax(0, 1fr) 32px; gap: 12px; align-items: center; font-size: 15px; height: 36px; border-bottom: 1px solid var(--line); overflow: hidden; transition: height .6s var(--morph), opacity .4s, border-color .4s; }
+[data-m="b"] .names li:not(:first-child) { height: 0; opacity: 0; border-color: transparent; }
+[data-m="b"] .names li:first-child { height: 56px; font-weight: 600; }
+
+/* Sections */
+.statement { padding: 180px 0 140px; text-align: center; }
+h2.big { font: 700 clamp(34px, 5vw, 64px)/1 var(--display); letter-spacing: -.045em; margin: 0 auto 20px; max-width: 16ch; text-wrap: balance; }
+.statement h2.big { max-width: 18ch; }
+.features { display: grid; gap: 32px; }
+.feature { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 32px; padding: 20px 20px 44px; overflow: hidden; scroll-margin-top: 96px; }
+.feature::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 0%), rgba(var(--apricot-rgb), .38), transparent 65%); }
+.feature:hover::before { opacity: 1; }
+.feature .window { position: relative; box-shadow: none; border-radius: 20px; }
+.feature .text { position: relative; padding: 40px 24px 0; max-width: 860px; }
+.feature h3 { font: 700 clamp(26px, 3.2vw, 40px)/1.05 var(--display); letter-spacing: -.04em; margin: 0 0 12px; }
+.feature .lead { margin: 0 0 20px; text-align: left; max-width: none; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; font-size: 15px; color: var(--ink-3); margin: 0; }
+.meta a { color: var(--ink); font-weight: 500; }
+.meta a.go { text-decoration: none; background: var(--ink); color: var(--page); height: 40px; padding: 0 18px; border-radius: 999px; display: inline-flex; align-items: center; font-weight: 600; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.meta a.go:hover { transform: translateY(-2px); box-shadow: 0 14px 26px -14px rgba(var(--apricot-rgb), .9); }
+.under { padding: 28px 8px 0; text-align: left; }
+.under .meta { margin-top: 0; }
+
+.method { padding: 160px 0 0; text-align: center; }
+.method .lead { margin-bottom: 56px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: left; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; }
+.tile:last-child { background: rgba(var(--apricot-rgb), .22); border-color: rgba(var(--apricot-rgb), .6); }
+.tile svg { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--surface); margin-bottom: 28px; }
+.tile:last-child svg { background: var(--key); color: var(--on-key); }
+.tile h3 { font: 600 21px/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 8px; }
+.tile p { margin: 0; color: var(--ink-2); font-size: 16px; }
+
+.contact { position: relative; margin: 160px 12px 12px; border-radius: 28px; overflow: hidden; padding: 120px 24px; text-align: center; isolation: isolate; }
+.contact .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 36px; }
+footer { padding: 28px 32px 40px; text-align: center; font-size: 13px; color: var(--ink-3); max-width: 780px; margin: 0 auto; }
+
+.toast { position: fixed; z-index: 40; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--ink); color: var(--page); font-size: 15px; font-weight: 500; padding: 12px 18px; border-radius: 999px; box-shadow: 0 18px 36px -16px rgba(var(--ink-rgb), .5); transition: opacity .3s, transform .3s var(--ease); max-width: calc(100vw - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+#tip { position: fixed; z-index: 30; pointer-events: none; opacity: 0; background: var(--ink); color: var(--page); font-size: 13px; font-weight: 500; line-height: 1.4; padding: 7px 10px; border-radius: 8px; max-width: 280px; transition: opacity .1s; }
+[data-tip] { cursor: default; }
+
+/* Motion */
+.js .rise .w { display: inline-block; opacity: 0; transform: translateY(.5em); animation: rise .8s var(--ease) forwards; animation-delay: calc(var(--i) * 60ms + 120ms); }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.js .fade-in { opacity: 0; animation: rise .8s var(--ease) .7s forwards; }
+.js .rv { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
+.js .rv.in { opacity: 1; transform: none; }
+.js [data-words] .w { opacity: .15; transition: opacity .25s linear; }
+
+@media (max-width: 1023px) {
+  .tiles { grid-template-columns: minmax(0, 1fr); }
+  .nav { gap: 12px; padding-left: 18px; }
+  .nav .links a { padding: 0 11px; }
+  .hint { display: none; }
+  .statement { padding: 120px 0 96px; } .method { padding-top: 96px; } .contact { margin-top: 96px; }
+}
+@media (max-width: 639px) {
+  body { font-size: 16px; }
+  .wrap { padding: 0 16px; }
+  .nav { gap: 6px; top: 12px; padding: 0 6px; max-width: calc(100vw - 16px); font-size: 13px; }
+  .nav strong { display: none; }
+  .nav .links { min-width: 0; overflow-x: auto; scrollbar-width: none; } .nav .links::-webkit-scrollbar { display: none; }
+  .nav .links a { padding: 0 10px; flex: none; }
+  .nav a.pill { padding: 0 14px; flex: none; }
+  .hero { margin: 8px; padding: 132px 16px 200px; border-radius: 20px; }
+  .hero-window { margin-top: -150px; }
+  .window { border-radius: 20px; } .window .body { padding: 24px 18px; }
+  .strip { height: 76px; } .seg { padding: 8px 10px; } .seg b { font-size: 22px; }
+  .vals { font-size: 14px; } .vals th, .vals td { padding-left: 10px; }
+  .vals .opt { display: none; }
+  .rank { --row: 52px; }
+  .rank .r { grid-template-columns: minmax(0, 1fr) 60px; gap: 2px 12px; align-content: center; }
+  .rank .l { grid-column: 1 / -1; }
+  .names li { grid-template-columns: minmax(0, 1fr) 56px 28px; }
+  .feature { border-radius: 24px; padding: 8px 8px 32px; } .feature .text { padding: 28px 12px 0; }
+  .switch button { height: 44px; min-height: 44px; padding: 0 14px; }
+  .contact { margin: 96px 8px 8px; padding: 88px 16px; border-radius: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .rise .w, .js .fade-in, .js .rv, .js [data-words] .w { opacity: 1; transform: none; }
+  .hero-window { transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <strong>Mincheng Li</strong>
+  <span class="links">
+    <a href="#ontario">Ontario</a>
+    <a href="#outbreaks">Outbreaks</a>
+    <a href="#ttc">TTC</a>
+    <a href="#adventureworks">AdventureWorks</a>
+  </span>
+  <a class="pill" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+</nav>
+
+<main>
+  <header class="hero">
+    <div class="wash" aria-hidden="true"></div>
+    <p class="who fade-in">Mincheng Li, mathematics co-op student at the University of Waterloo</p>
+    <h1 class="rise" data-split>Change what you count and the answer changes.</h1>
+    <p class="lead fade-in">Four projects built on public data. Each one comes down to a choice about what to measure, and you can flip that choice yourself.</p>
+    <div class="cta fade-in">
+      <a class="btn primary" href="#ontario">Try the first switch</a>
+      <a class="btn ghost" href="https://github.com/Min-star-code">See the code on GitHub</a>
+    </div>
+    <ul class="chips fade-in" aria-label="Tools used">
+      <li>SQL</li><li>Python</li><li>pandas</li><li>Tableau Public</li><li>Excel</li><li>Power Query</li>
+    </ul>
+  </header>
+
+  <div class="wrap">
+    <!-- Ontario -->
+    <section id="ontario">
+      <figure class="window hero-window demo" data-demo="ontario" data-m="a" style="margin-left:0;margin-right:0;margin-bottom:0">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>Ontario infrastructure projects</span></div>
+        <div class="body">
+          <div class="ask"><span>How big is transit?</span>
+            <div class="switch" role="group" aria-label="Measure">
+              <button data-m="a" aria-pressed="true">Count projects</button>
+              <button data-m="b" aria-pressed="false">Count dollars</button>
+            </div>
+            <span class="hint" aria-hidden="true"><svg width="46" height="34" viewBox="0 0 46 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M44 6C30 2 14 8 6 26"/><path d="M4 14l2 12 11-5"/></svg>flip me</span>
+          </div>
+          <p class="says" aria-live="polite"></p>
+          <div class="strip num"></div>
+          <table class="vals num">
+            <thead><tr><th scope="col">Category</th><th scope="col">Projects</th><th scope="col" class="opt">Share</th><th scope="col">Reported budget</th><th scope="col" class="opt">Share</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <figcaption class="foot">Budget shares cover the 3,930 projects that publish a budget, $163.8 billion in total. The other 2,005 publish none, so every budget figure is a lower bound.</figcaption>
+        </div>
+      </figure>
+      <div class="under rv">
+        <p class="meta"><span>I cleaned all 5,935 records in Python, summarized them in SQL, and published a Tableau dashboard and a one-page briefing note. October 2026.</span>
+          <a href="https://public.tableau.com/app/profile/mincheng.li/viz/OntarioBuildsInfrastructureProjects">Open the Tableau dashboard</a>
+          <a class="go" href="projects/ontario.html">Explore the full data</a>
+          <a href="https://github.com/Min-star-code/ontario-infrastructure-analysis">Read the code</a></p>
+      </div>
+    </section>
+
+    <section class="statement">
+      <h2 class="big" data-split data-words>Three more projects, three more switches.</h2>
+      <p class="lead rv">The same habit runs through all of them: decide what is being counted before trusting the total.</p>
+    </section>
+
+    <div class="features">
+      <!-- Outbreaks -->
+      <section class="feature rv" id="outbreaks">
+        <figure class="window demo" data-demo="outbreaks" data-m="a" style="margin:0">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>Toronto healthcare outbreaks</span></div>
+          <div class="body">
+            <div class="ask"><span>How many places is this?</span>
+              <div class="switch" role="group" aria-label="Grouping">
+                <button data-m="a" aria-pressed="true">Group by name</button>
+                <button data-m="b" aria-pressed="false">Group by address</button>
+              </div>
+            </div>
+            <p class="says" aria-live="polite"></p>
+            <ul class="names num"></ul>
+            <figcaption class="foot">One real address from the data, 2030 McNicoll Ave, with outbreaks recorded from 2016 to 2026.</figcaption>
+          </div>
+        </figure>
+        <div class="text">
+          <h3>4,199 institution names, 603 actual sites</h3>
+          <p class="lead">I combined 11 yearly Toronto Public Health files into one table of 7,029 outbreaks, wrote 12 SQL validation rules, and built an Excel report whose totals match the SQL.</p>
+          <p class="meta"><span>Python, SQL and Excel. October 2026.</span><a class="go" href="projects/outbreaks.html">Explore the full data</a>
+          <a href="https://github.com/Min-star-code/toronto-outbreak-data-quality">Read the code</a></p>
+        </div>
+      </section>
+
+      <!-- TTC -->
+      <section class="feature rv" id="ttc">
+        <figure class="window demo" data-demo="ttc" data-m="a" style="margin:0">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>TTC subway delays, 2025</span></div>
+          <div class="body">
+            <div class="ask"><span>What causes the most trouble?</span>
+              <div class="switch" role="group" aria-label="Measure">
+                <button data-m="a" aria-pressed="true">Count incidents</button>
+                <button data-m="b" aria-pressed="false">Count delay minutes</button>
+              </div>
+            </div>
+            <p class="says" aria-live="polite"></p>
+            <div class="rank num"></div>
+            <figcaption class="foot">The 12 causes that rank in the top eight on either measure.</figcaption>
+          </div>
+        </figure>
+        <div class="text">
+          <h3>65% of recorded incidents delayed no one</h3>
+          <p class="lead">I analyzed 25,737 incidents and 70,768 delay minutes from the City of Toronto's 2025 log by cause, line and time of day. 16,642 incidents recorded zero minutes, so the ranking depends on the measure.</p>
+          <p class="meta"><span>Python, pandas and matplotlib. September 2026.</span><a class="go" href="projects/ttc.html">Explore the full data</a>
+          <a href="https://github.com/Min-star-code/ttc-subway-delay-analysis">Read the code</a></p>
+        </div>
+      </section>
+
+      <!-- AdventureWorks -->
+      <section class="feature rv" id="adventureworks">
+        <figure class="window demo" data-demo="aw" data-m="a" style="margin:0">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>AdventureWorks sales</span></div>
+          <div class="body">
+            <div class="ask"><span>Which channel matters most?</span>
+              <div class="switch" role="group" aria-label="Measure">
+                <button data-m="a" aria-pressed="true">Count revenue</button>
+                <button data-m="b" aria-pressed="false">Count gross profit</button>
+              </div>
+            </div>
+            <p class="says" aria-live="polite"></p>
+            <div class="strip num"></div>
+            <table class="vals num">
+              <thead><tr><th scope="col">Channel</th><th scope="col">Revenue</th><th scope="col" class="opt">Share</th><th scope="col">Est. gross profit</th><th scope="col" class="opt">Share</th><th scope="col">Margin</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <figcaption class="foot">Fictional sample data from Microsoft. Gross profit is estimated from standard cost and excludes tax, freight, operating expenses and returns.</figcaption>
+          </div>
+        </figure>
+        <div class="text">
+          <h3>73% of revenue, 0.6% margin</h3>
+          <p class="lead">I modelled 121,317 shipped sales lines in SQLite, matched each one to the product cost on its order date, and built an Excel dashboard with Power Query that reconciles to the SQL.</p>
+          <p class="meta"><span>SQL, Excel, Power Query and Python. September 2026.</span><a class="go" href="projects/adventureworks.html">Explore the full data</a>
+          <a href="https://github.com/Min-star-code/adventureworks-sales-analysis">Read the code</a></p>
+        </div>
+      </section>
+    </div>
+
+    <section class="method">
+      <h2 class="big" data-split data-words>How every project is built.</h2>
+      <p class="lead rv">Three rules I kept across all four.</p>
+      <div class="tiles">
+        <article class="tile rv" style="--d:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><path d="M17 16l2 2 3-4"/></svg>
+          <h3>No row is dropped</h3>
+          <p>Records that fail a check are flagged and kept. The cleaned Ontario file has the same 5,935 rows as the source, and all 7,029 outbreak records survive the merge.</p>
+        </article>
+        <article class="tile rv" style="--d:1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14M5 16h14"/><path d="M9 4l-2 16M17 4l-2 16"/></svg>
+          <h3>Totals are checked twice</h3>
+          <p>Excel totals are matched back to SQL, the outbreak data runs through 12 validation rules, and the AdventureWorks pipeline has 17 automated tests.</p>
+        </article>
+        <article class="tile rv" style="--d:2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          <h3>Limits are written down</h3>
+          <p>Each report says what the data cannot support: budgets are lower bounds, outbreak counts are not case counts, and delay totals are not a reliability rate.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section class="contact" id="contact">
+    <div class="wash" aria-hidden="true"></div>
+    <h2 class="big" data-split data-words>Get in touch.</h2>
+    <p class="lead rv">mincheng.li@uwaterloo.ca</p>
+    <div class="cta rv">
+      <a class="btn primary" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+      <a class="btn ghost" href="https://github.com/Min-star-code">GitHub profile</a>
+    </div>
+  </section>
+</main>
+
+<footer>Independent analyses of open data from the Ontario Data Catalogue, City of Toronto Open Data and Microsoft's AdventureWorks sample. Not endorsed by the Government of Ontario, the City of Toronto, the TTC or Microsoft.</footer>
+<div id="tip"></div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const fmt = n => n.toLocaleString('en-CA');
+const p1 = x => (x < 0.95 ? x.toFixed(1) : Math.round(x)) + '%';
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- Proportion strips ---- */
+function strip(fig, rows, key, tips) {
+  const ta = rows.reduce((s, r) => s + r.a, 0), tb = rows.reduce((s, r) => s + r.b, 0);
+  rows.forEach(r => { r.pa = r.a / ta * 100; r.pb = r.b / tb * 100; });
+  const el = $('.strip', fig);
+  el.innerHTML = rows.map(r => `<div class="seg${r.name === key ? ' key' : ''}"><b></b><span>${r.name}</span></div>`).join('');
+  const segs = [...el.children];
+  const fit = () => { const m = fig.dataset.m, w = el.clientWidth; segs.forEach((s, i) => s.classList.toggle('tight', rows[i]['p' + m] / 100 * w < 64)); };
+  addEventListener('resize', fit);
+  return m => {
+    segs.forEach((s, i) => { const r = rows[i], p = r['p' + m]; s.style.flexGrow = Math.max(p, .01); s.firstChild.textContent = p1(p); s.dataset.tip = tips(r, m); });
+    fit();
+  };
+}
+
+/* Ontario: reports/q1.csv */
+const ont = [['Transit', 623, 117.76], ['Health care', 216, 24.04], ['Education', 882, 12.84], ['Communities', 2257, 8.08],
+  ['Roads and bridges', 1056, 0.53], ['Child care', 307, 0.39], ['Recreation', 594, 0.20]].map(([name, a, b]) => ({ name, a, b }));
+const figO = $('[data-demo="ontario"]');
+const drawO = strip(figO, ont, 'Transit', (r, m) => m === 'a'
+  ? `${r.name}: ${fmt(r.a)} of 5,935 projects (${p1(r.pa)})` : `${r.name}: $${r.b.toFixed(2)}B of $163.8B reported (${p1(r.pb)})`);
+$('tbody', figO).innerHTML = ont.map(r => `<tr><td><i class="${r.name === 'Transit' ? 'key' : ''}"></i>${r.name}</td>
+  <td class="a">${fmt(r.a)}</td><td class="a opt">${p1(r.pa)}</td><td class="b">$${r.b.toFixed(2)}B</td><td class="b opt">${p1(r.pb)}</td></tr>`).join('');
+
+/* AdventureWorks: data/processed/controls.csv ($ millions) */
+const aw = [{ name: 'Reseller', a: 80.4877, b: 0.4769, mg: '0.6%' }, { name: 'Online', a: 29.3587, b: 12.0809, mg: '41.1%' }];
+const figA = $('[data-demo="aw"]');
+const drawA = strip(figA, aw, 'Reseller', (r, m) => m === 'a'
+  ? `${r.name}: $${r.a.toFixed(2)}M of $109.85M revenue (${p1(r.pa)})` : `${r.name}: $${r.b.toFixed(2)}M of $12.56M estimated gross profit (${p1(r.pb)})`);
+$('tbody', figA).innerHTML = aw.map(r => `<tr><td><i class="${r.name === 'Reseller' ? 'key' : ''}"></i>${r.name}</td>
+  <td class="a">$${r.a.toFixed(2)}M</td><td class="a opt">${p1(r.pa)}</td><td class="b">$${r.b.toFixed(2)}M</td><td class="b opt">${p1(r.pb)}</td><td class="b">${r.mg}</td></tr>`).join('');
+
+/* TTC: reports/summary.json by_cause */
+const ttc = [['Disorderly patron', 2944, 7646], ['Injured or ill customer in station, transported', 2329, 183],
+  ['Security other', 1679, 3418], ['Passenger alarm, no trouble found', 1367, 2955], ['Train door monitoring (OPTO)', 1258, 3406],
+  ['Injured or ill customer in station, aid refused', 1095, 155], ['No collector available', 1047, 0], ['No collector available, non-ESA', 939, 0],
+  ['Injured or ill customer on train, aid refused', 841, 4797], ['Unauthorized at track level', 571, 3917],
+  ['Injured or ill customer on train, transported', 412, 3785], ['Weather reports and related problems', 211, 2745]].map(([name, a, b]) => ({ name, a, b }));
+const figT = $('[data-demo="ttc"]'), rank = $('.rank', figT);
+rank.innerHTML = ttc.map(r => `<div class="r" data-tip="${r.name}: ${fmt(r.a)} incidents, ${fmt(r.b)} delay minutes"><span class="l">${r.name}</span><span class="t"><div class="bar-fill"></div></span><span class="v"></span></div>`).join('');
+const rowsT = [...rank.children];
+function drawT(m) {
+  const h = parseFloat(getComputedStyle(rank).getPropertyValue('--row')), max = Math.max(...ttc.map(r => r[m]));
+  rank.style.height = h * ttc.length + 'px';
+  ttc.map((r, i) => i).sort((x, y) => ttc[y][m] - ttc[x][m] || x - y).forEach((i, pos) => {
+    rowsT[i].style.transform = `translateY(${pos * h}px)`;
+    $('.bar-fill', rowsT[i]).style.width = ttc[i][m] / max * 100 + '%';
+    $('.v', rowsT[i]).textContent = fmt(ttc[i][m]);
+  });
+}
+addEventListener('resize', () => drawT(figT.dataset.m));
+
+/* Outbreaks: facility names recorded at 2030 McNicoll Ave */
+const names = [['Mon Sheong Scarborough Long Term Care Centre', 26], ['Mon Sheong Scarborough', 12], ['Mon Sheong Foundation', 3],
+  ['Mon Sheong Scarborough Long Term Care', 2], ['Mon Sheong Scarbouroug Long-Term Care', 1], ['Mon Sheong Scarborugh LTC Centre', 1],
+  ['Mon Sheong Scarborough Long Term Care Home', 1], ['Mon Sheong Scarborough LTC Centre', 1], ['Mon Sheong', 1]];
+const figN = $('[data-demo="outbreaks"]'), list = $('.names', figN);
+list.innerHTML = names.map(([n, c]) => `<li><span class="l">${n}</span><span class="t"><div class="bar-fill"></div></span><span class="v">${c}</span></li>`).join('');
+function drawN(m) {
+  [...list.children].forEach((li, i) => {
+    const c = m === 'b' && i === 0 ? 48 : names[i][1];
+    $('.bar-fill', li).style.width = c / 48 * 100 + '%';
+    $('.v', li).textContent = c;
+    li.dataset.tip = m === 'b' && i === 0 ? 'All nine names at 2030 McNicoll Ave: 48 outbreaks' : `Recorded as "${names[i][0]}" in ${names[i][1]} outbreak${names[i][1] > 1 ? 's' : ''}`;
+  });
+}
+
+/* ---- Switches ---- */
+const says = {
+  ontario: { a: 'Counted by project, transit is <mark>10%</mark> of the list.', b: 'Counted by reported budget, transit is <mark>72%</mark> of it.' },
+  outbreaks: { a: 'Grouped by name, this looks like <mark>nine</mark> facilities.', b: 'Grouped by address, it is <mark>one</mark> site with 48 outbreaks.' },
+  ttc: { a: 'By incidents, two of the top eight causes delayed <mark>no one</mark>.', b: 'By delay minutes, <mark>medical and track-level</mark> incidents move up.' },
+  aw: { a: 'By revenue, resellers bring in <mark>73%</mark> of sales.', b: 'By estimated gross profit, resellers earn <mark>4%</mark> of it.' }
+};
+const draw = { ontario: drawO, outbreaks: drawN, ttc: drawT, aw: drawA };
+$$('figure.demo').forEach(fig => {
+  const id = fig.dataset.demo;
+  const set = m => {
+    fig.dataset.m = m;
+    $$('.switch button', fig).forEach(b => b.setAttribute('aria-pressed', b.dataset.m === m));
+    $('.says', fig).innerHTML = says[id][m];
+    draw[id](m);
+  };
+  $$('.switch button', fig).forEach(b => b.addEventListener('click', () => { fig.touched = true; set(b.dataset.m); }));
+  set('a');
+  // Flip once, the first time the chart is properly in view
+  if (!calm && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      setTimeout(() => { if (!fig.touched) set('b'); }, 900);
+    }), { threshold: .55 });
+    io.observe($('.switch', fig).parentNode.parentNode);
+  }
+});
+document.fonts && document.fonts.ready.then(() => dispatchEvent(new Event('resize')));
+
+/* ---- Text splitting ---- */
+$$('[data-split]').forEach(el => {
+  el.innerHTML = el.textContent.trim().split(/\s+/).map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ');
+});
+
+/* ---- Reveal on enter ---- */
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach(el => io.observe(el));
+} else $$('.rv').forEach(el => el.classList.add('in'));
+
+/* ---- Scroll-linked effects (one rAF-throttled handler) ---- */
+const nav = $('.nav'), heroWin = $('.hero-window'), wordy = $$('[data-words]');
+const navLinks = $$('.nav .links a'), spy = navLinks.map(l => [l.hash.slice(1), document.getElementById(l.hash.slice(1))]);
+let ticking = false;
+function onScroll() {
+  ticking = false;
+  const vh = innerHeight;
+  nav.classList.toggle('scrolled', scrollY > 40);
+  // Highlight the project currently on screen
+  let cur = null;
+  spy.forEach(([id, el]) => { const b = el.getBoundingClientRect(); if (b.top <= vh * .45 && b.bottom > vh * .3) cur = id; });
+  navLinks.forEach(l => { const on = l.hash === '#' + cur; l.classList.toggle('on', on); on ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current'); });
+  if (!calm) {
+    const r = heroWin.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .7)));
+    heroWin.style.transform = `translateY(${(1 - p) * 40}px) scale(${.94 + .06 * p})`;
+    wordy.forEach(h => {
+      const b = h.getBoundingClientRect();
+      if (b.bottom < 0 || b.top > vh) return;
+      const ws = h.children, q = Math.max(0, Math.min(1, (vh * .92 - b.top) / (vh * .42)));
+      for (let i = 0; i < ws.length; i++) ws[i].style.opacity = .15 + .85 * Math.max(0, Math.min(1, q * ws.length - i));
+    });
+  }
+}
+addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+onScroll();
+
+/* ---- Card spotlight ---- */
+if (matchMedia('(hover: hover)').matches && !calm) $$('.feature').forEach(c => {
+  let raf = 0;
+  c.addEventListener('pointermove', e => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; const b = c.getBoundingClientRect(); c.style.setProperty('--mx', e.clientX - b.left + 'px'); c.style.setProperty('--my', e.clientY - b.top + 'px'); });
+  });
+});
+
+/* Email links: open the mail app if there is one, and always copy the address */
+(() => {
+  const toast = document.createElement('div'); toast.className = 'toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast);
+  let timer;
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="mailto:"]');
+    if (!a) return;
+    const addr = a.getAttribute('href').slice(7);
+    const done = ok => { toast.textContent = ok ? `Email address copied: ${addr}` : `Email: ${addr}`; toast.classList.add('show'); clearTimeout(timer); timer = setTimeout(() => toast.classList.remove('show'), 3200); };
+    const legacy = () => { const t = document.createElement('textarea'); t.value = addr; t.style.position = 'fixed'; t.style.opacity = 0; document.body.appendChild(t); t.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (_) {} t.remove(); done(ok); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(addr).then(() => done(true), legacy); else legacy();
+  });
+})();
+
+/* ---- Tooltip ---- */
+const tip = $('#tip');
+document.addEventListener('pointermove', e => {
+  const el = e.target.closest('[data-tip]');
+  if (!el) { tip.style.opacity = 0; return; }
+  tip.textContent = el.dataset.tip;
+  tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8)) + 'px';
+  const y = e.clientY - tip.offsetHeight - 12;
+  tip.style.top = (y < 8 ? e.clientY + 18 : y) + 'px';
+  tip.style.opacity = 1;
+});
+</script>
+</body>
+</html>

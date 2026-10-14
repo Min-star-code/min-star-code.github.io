@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AdventureWorks sales and profitability | Mincheng Li</title>
+<meta name="description" content="Interactive view of AdventureWorks sample sales: revenue and estimated gross profit by channel, category, territory and discount.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/project.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <strong><a href="../index.html">Mincheng Li</a></strong>
+  <span class="links"><a href="ontario.html">Ontario</a><a href="outbreaks.html">Outbreaks</a><a href="ttc.html">TTC</a><a href="adventureworks.html" aria-current="page">AdventureWorks</a></span>
+  <a class="pill" href="mailto:mincheng.li@uwaterloo.ca">Email me</a>
+</nav>
+
+<main>
+  <header class="phead">
+    <div class="wash" aria-hidden="true"></div>
+    <p class="made rise">SQL, Excel, Power Query and Python. September 2026.</p>
+    <h1 class="rise" style="--i:1">AdventureWorks sales and profitability</h1>
+    <p class="lead rise" style="--i:2">Which channel, product groups and territories generated revenue, and where revenue failed to turn into estimated gross profit.</p>
+    <div class="cta rise" style="--i:3"><a class="btn primary" href="https://github.com/Min-star-code/adventureworks-sales-analysis">Read the code</a><a class="btn ghost" href="https://github.com/Min-star-code/adventureworks-sales-analysis/blob/main/assets/dashboard.png">See the Excel dashboard</a></div>
+  </header>
+
+  <div class="wrap">
+    <section class="explorer" aria-label="Interactive charts">
+      <div class="filters" id="filters"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid">
+        <section class="panel wide"><h2>By month</h2><p class="sub"><span data-mlabel></span> by order month. Click a column to filter.</p><div id="mon"></div><p class="note">The first and last months are partial.</p></section>
+        <section class="panel"><h2>By product category</h2><p class="sub"><span data-mlabel></span> by category.</p><div id="cat"></div></section>
+        <section class="panel"><h2>By territory</h2><p class="sub"><span data-mlabel></span> by sales territory.</p><div id="terr"></div></section>
+        <section class="panel"><h2>Gross margin by channel</h2><p class="sub">Estimated gross profit divided by revenue.</p><div id="mch"></div></section>
+        <section class="panel"><h2>Gross margin by discount band</h2><p class="sub">Estimated gross profit divided by revenue, by unit-price discount.</p><div id="mband"></div><p class="note">A descriptive comparison. It does not show that discounts caused the losses.</p></section>
+      </div>
+    </section>
+    <section class="prose"><h2>How the numbers are defined</h2><div><p>Eight source tables are loaded into SQLite. The model keeps shipped orders only and joins each of the 121,317 order lines to the product's standard cost on its order date. On 64 lines no cost interval matches, so the current standard cost is used and flagged.</p><ul><li><b>Revenue</b> is line revenue after the unit-price discount, excluding tax and freight.</li><li><b>Estimated gross profit</b> is revenue minus quantity times standard cost. It is not net profit.</li><li><b>Gross margin</b> is estimated gross profit divided by revenue.</li></ul><p style="margin-top:14px">The Excel dashboard imports six SQL exports through Power Query and reconciles its totals to the SQL controls on a QA sheet. Seventeen Python tests cover the pipeline.</p></div></section>
+    <section class="prose"><h2>What this data cannot show</h2><div><ul><li>AdventureWorks is Microsoft's fictional sample, not a real business. Orders run from 30 May 2022 to 29 June 2025.</li><li>Gross profit uses standard cost and excludes operating expenses and returns.</li><li>Discount-band comparisons are observational; channel mix and product mix could explain some of the difference.</li><li>Order and customer counts are left out of this page because they cannot be added across categories.</li></ul></div></section>
+    <nav class="pager" aria-label="Other projects"><a href="ttc.html"><small>Previous project</small><b>TTC subway delay incidents</b></a><a href="ontario.html"><small>Next project</small><b>Ontario infrastructure projects</b></a></nav>
+  </div>
+</main>
+<footer>Source: <a href="https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script">Microsoft AdventureWorks OLTP sample data</a> (MIT licence). Independent analysis, not endorsed by Microsoft.</footer>
+
+<script src="../data/adventureworks.js"></script>
+<script src="../assets/explore.js"></script>
+<script>
+const { Explorer, filterBar, kpis, bars, cols, heat, dotMap, chrome, int, money, pct, $ } = EX, D = DATA;
+chrome();
+const mnames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const months = D.months.map(m => `${mnames[+m.slice(5) - 1]} ${m.slice(0, 4)}`);
+const ex = Explorer({
+  n: D.n, measure: 'rev',
+  dims: {
+    ch: { label: 'Channel', all: 'All channels', values: D.chans, of: i => D.ch[i] },
+    cat: { label: 'Category', all: 'All categories', values: D.cats, of: i => D.cat[i] },
+    terr: { label: 'Territory', all: 'All territories', values: D.terrs, of: i => D.terr[i] },
+    band: { label: 'Discount', all: 'Any discount', values: D.bands, of: i => D.band[i] },
+    mon: { label: 'Month', all: 'All months', values: months, of: i => D.mon[i] }
+  },
+  measures: {
+    rev: { label: 'Revenue', of: i => D.rev[i], fmt: money },
+    gp: { label: 'Estimated gross profit', of: i => D.gp[i], fmt: money }
+  }
+});
+filterBar($('#filters'), ex, { keys: ['ch', 'cat', 'terr', 'band'], count: ex => {
+  const m = ex.f.mon != null ? `${months[ex.f.mon]}. ` : '';
+  return `${money(ex.sum(i => D.rev[i]))} of $110M revenue<small>${m}${ex.active().length ? 'Filtered' : 'No filters applied'}</small>`;
+} });
+kpis($('#kpis'), ex, [
+  ex => [money(ex.sum(i => D.rev[i])), 'Revenue'],
+  ex => [money(ex.sum(i => D.gp[i])), 'Estimated gross profit'],
+  ex => { const r = ex.sum(i => D.rev[i]); return [r ? pct(ex.sum(i => D.gp[i]) / r) : 'n/a', 'Gross margin']; },
+  ex => [int(ex.sum(i => D.units[i])), 'Units shipped']
+]);
+const margin = k => ex => {
+  const r = ex.group(k, i => D.rev[i]), g = ex.group(k, i => D.gp[i]);
+  return { vals: r.map((v, j) => v ? g[j] / v : 0), fmt: v => pct(v), tip: (j, v) => `${ex.dims[k].values[j]}: ${pct(v)} margin on ${money(r[j])} revenue` };
+};
+cols($('#mon'), ex, 'mon', { tick: (i, m) => m.startsWith('Jan') ? m.slice(4) : '' });
+bars($('#cat'), ex, 'cat'); bars($('#terr'), ex, 'terr');
+bars($('#mch'), ex, 'ch', { sort: 'index', value: margin('ch') });
+bars($('#mband'), ex, 'band', { sort: 'index', value: margin('band') });
+// Panel subtitles that name the current measure
+ex.on(() => document.querySelectorAll('[data-mlabel]').forEach(el => el.textContent = ex.m.label));
+</script>
+</body>
+</html>
